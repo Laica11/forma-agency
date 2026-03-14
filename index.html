@@ -1,0 +1,1038 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>FORMA — Personal Branding Agency</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700;1,900&family=IBM+Plex+Mono:wght@400;500&family=Epilogue:wght@300;400;500&display=swap" rel="stylesheet"/>
+<style>
+
+/* ─────────────────────────────────────────
+   TOKENS
+───────────────────────────────────────── */
+:root {
+  /* Palette */
+  --paper:     #EDE5D4;
+  --paper-2:   #E4DAC6;
+  --paper-3:   #D9CEBC;
+  --ink:       #1E1A14;
+  --ink-2:     #3A3020;
+  --ink-3:     #6B5C48;
+  --rust:      #C05B3A;
+  --rust-lt:   #D97A58;
+  --rust-dk:   #8C3E24;
+  --border:    rgba(30,26,20,0.11);
+
+  /* Fonts — strict roles */
+  --f-head:  'Playfair Display', Georgia, serif; /* headlines & pull quotes ONLY */
+  --f-mono:  'IBM Plex Mono', monospace;          /* labels, tags, nav, buttons, captions, stats */
+  --f-body:  'Epilogue', sans-serif;              /* body copy, descriptions, footer links */
+
+  /* Type scale */
+  --t-d1: clamp(3.6rem, 6.5vw, 6.5rem);
+  --t-d2: clamp(2rem, 3.4vw, 3.4rem);
+  --t-d3: clamp(1.35rem, 1.8vw, 1.8rem);
+  --t-ui: 0.88rem;
+  --t-tag: 0.62rem;
+  --t-cap: 0.50rem;
+
+  /* Spacing rhythm */
+  --sp-xs:  0.5rem;
+  --sp-sm:  1rem;
+  --sp-md:  1.75rem;
+  --sp-lg:  3rem;
+  --sp-xl:  5.5rem;
+  --sp-sec: 7rem;   /* section vertical padding */
+  --sp-h:   3.5rem; /* horizontal page margin */
+
+  --ease: cubic-bezier(0.16,1,0.3,1);
+}
+
+/* ─────────────────────────────────────────
+   BASE
+───────────────────────────────────────── */
+*,*::before,*::after { box-sizing:border-box; margin:0; padding:0; }
+html { scroll-behavior:smooth; overflow-x:hidden; }
+body {
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--f-body);
+  font-size: var(--t-ui);
+  font-weight: 300;
+  line-height: 1.7;
+  overflow-x: hidden;
+  cursor: none;
+}
+::-webkit-scrollbar { width:2px; }
+::-webkit-scrollbar-track { background:var(--paper); }
+::-webkit-scrollbar-thumb { background:var(--rust); }
+
+/* ─────────────────────────────────────────
+   CURSOR
+───────────────────────────────────────── */
+#cur { position:fixed; top:0; left:0; z-index:9999; pointer-events:none; }
+#cur-d {
+  width:6px; height:6px; border-radius:50%;
+  background:var(--ink); position:absolute;
+  transform:translate(-50%,-50%);
+}
+#cur-r {
+  width:32px; height:32px; border-radius:50%;
+  border:1.5px solid var(--rust); position:absolute;
+  transform:translate(-50%,-50%);
+  transition:width .4s var(--ease), height .4s var(--ease);
+}
+body:has(a:hover) #cur-r,
+body:has(button:hover) #cur-r { width:50px; height:50px; }
+
+/* ─────────────────────────────────────────
+   REVEAL
+───────────────────────────────────────── */
+.rv  { opacity:0; transform:translateY(24px); transition:opacity .8s var(--ease),transform .8s var(--ease); }
+.rvl { opacity:0; transform:translateX(-28px); transition:opacity .8s var(--ease),transform .8s var(--ease); }
+.rvr { opacity:0; transform:translateX(28px);  transition:opacity .8s var(--ease),transform .8s var(--ease); }
+.rv.on,.rvl.on,.rvr.on { opacity:1; transform:none; }
+.d1{transition-delay:.1s} .d2{transition-delay:.22s} .d3{transition-delay:.35s} .d4{transition-delay:.48s}
+
+/* ─────────────────────────────────────────
+   SHARED PATTERNS
+   Label: mono, uppercase, rust
+   Section title: Playfair only
+───────────────────────────────────────── */
+.label {
+  font-family: var(--f-mono);
+  font-size: var(--t-tag);
+  letter-spacing: .28em;
+  text-transform: uppercase;
+  color: var(--rust);
+  display: flex;
+  align-items: center;
+  gap: .6rem;
+  margin-bottom: var(--sp-sm);
+}
+.label::before { content:''; width:16px; height:1px; background:var(--rust); flex-shrink:0; }
+
+.sec-title {
+  font-family: var(--f-head);
+  font-size: var(--t-d2);
+  font-weight: 700;
+  line-height: 1.05;
+  letter-spacing: -.02em;
+  color: var(--ink);
+}
+.sec-title em { font-style:italic; color:var(--rust); }
+
+.sec { padding: var(--sp-sec) var(--sp-h); }
+
+/* ─────────────────────────────────────────
+   NAV — all mono
+───────────────────────────────────────── */
+nav {
+  position:fixed; inset:0 0 auto 0; z-index:800;
+  display:flex; align-items:center; justify-content:space-between;
+  padding:1.5rem var(--sp-h);
+  transition:background .5s, padding .4s, box-shadow .4s;
+}
+nav.stuck {
+  background:rgba(237,229,212,0.95);
+  backdrop-filter:blur(12px);
+  padding:.9rem var(--sp-h);
+  box-shadow:0 1px 0 var(--border);
+}
+.nav-logo {
+  font-family: var(--f-mono);
+  font-weight: 500;
+  font-size: var(--t-tag);
+  letter-spacing: .4em;
+  text-transform: uppercase;
+  color: var(--ink);
+  text-decoration: none;
+}
+.nav-links { display:flex; gap:2rem; list-style:none; }
+.nav-links a {
+  font-family: var(--f-mono);
+  font-size: var(--t-cap);
+  letter-spacing: .2em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  text-decoration: none;
+  transition: color .25s;
+}
+.nav-links a:hover { color:var(--ink); }
+.nav-pill {
+  font-family: var(--f-mono);
+  font-size: var(--t-cap);
+  letter-spacing: .2em;
+  text-transform: uppercase;
+  color: var(--paper);
+  background: var(--rust);
+  padding: .5rem 1.25rem;
+  text-decoration: none;
+  transition: background .3s;
+}
+.nav-pill:hover { background:var(--rust-dk); }
+.nav-burger { display:none; flex-direction:column; gap:5px; }
+.nav-burger span { display:block; width:22px; height:1.5px; background:var(--ink); }
+
+/* ─────────────────────────────────────────
+   HERO
+───────────────────────────────────────── */
+#hero {
+  min-height:100vh;
+  display:grid; grid-template-columns:1fr 1fr;
+  padding-top:6rem; overflow:hidden;
+}
+.hero-left {
+  display:flex; flex-direction:column; justify-content:center;
+  padding:3.5rem var(--sp-h);
+}
+.hero-eyebrow {
+  font-family: var(--f-mono);
+  font-size: var(--t-cap);
+  letter-spacing: .3em;
+  text-transform: uppercase;
+  color: var(--rust);
+  display:flex; align-items:center; gap:.6rem;
+  margin-bottom: var(--sp-md);
+  opacity:0; animation:fup .8s var(--ease) .2s forwards;
+}
+.hero-eyebrow::before { content:''; width:18px; height:1px; background:var(--rust); }
+
+/* Hero H1 — Playfair, 3 stacked lines */
+.hero-h1 {
+  font-family: var(--f-head);
+  font-size: var(--t-d1);
+  font-weight: 900;
+  line-height: .92;
+  letter-spacing: -.025em;
+  opacity:0; animation:fup 1s var(--ease) .4s forwards;
+}
+.hero-h1 .l-solid  { display:block; color:var(--ink); }
+.hero-h1 .l-rust   { display:block; color:var(--rust); font-style:italic; }
+
+.hero-sub {
+  font-family: var(--f-body);
+  font-size: var(--t-ui);
+  color: var(--ink-3);
+  font-weight: 300;
+  max-width:360px; line-height:1.8;
+  margin-top: var(--sp-md);
+  opacity:0; animation:fup .9s var(--ease) .7s forwards;
+}
+.hero-btns {
+  display:flex; gap:1rem; align-items:center;
+  margin-top: var(--sp-md);
+  opacity:0; animation:fup .9s var(--ease) .9s forwards;
+}
+.btn-solid {
+  font-family: var(--f-mono);
+  font-size: var(--t-cap);
+  letter-spacing: .2em;
+  text-transform: uppercase;
+  color: var(--paper); background:var(--rust);
+  padding:.75rem 1.75rem;
+  text-decoration:none; display:inline-flex; align-items:center; gap:.5rem;
+  transition:background .3s;
+}
+.btn-solid:hover { background:var(--rust-dk); }
+.btn-text {
+  font-family: var(--f-mono);
+  font-size: var(--t-cap);
+  letter-spacing: .2em;
+  text-transform: uppercase;
+  color: var(--ink-3); text-decoration:none;
+  border-bottom:1px solid var(--border); padding-bottom:2px;
+  transition:color .3s, border-color .3s;
+}
+.btn-text:hover { color:var(--ink); border-color:var(--ink); }
+
+/* Hero KPIs — mono values + micro labels */
+.hero-kpis {
+  display:flex; gap:2.5rem;
+  margin-top: var(--sp-lg);
+  padding-top: var(--sp-md);
+  border-top:1px solid var(--border);
+  opacity:0; animation:fup .9s var(--ease) 1.1s forwards;
+}
+.kpi-val {
+  font-family: var(--f-mono);
+  font-size: var(--t-d3);
+  font-weight: 500;
+  color: var(--ink);
+  line-height:1;
+}
+.kpi-lbl {
+  font-family: var(--f-mono);
+  font-size: var(--t-cap);
+  letter-spacing: .18em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  margin-top:.3rem;
+}
+
+/* Hero right photo panel */
+.hero-right { position:relative; overflow:hidden; background:var(--paper-2); }
+.hero-photo-bg {
+  width:100%; height:100%;
+  background:linear-gradient(150deg,#D4C8B0 0%,#C0B09A 50%,#ADA08A 100%);
+  display:flex; align-items:center; justify-content:center; position:relative;
+}
+.hero-photo-glyph {
+  font-family: var(--f-head);
+  font-size:var(--t-d1); font-style:italic;
+  color:rgba(30,26,20,.06); user-select:none;
+}
+.hero-photo-cap {
+  position:absolute; bottom:1.75rem; left:1.75rem;
+  font-family: var(--f-mono);
+  font-size: var(--t-cap);
+  letter-spacing:.2em; text-transform:uppercase;
+  color:rgba(30,26,20,.36);
+  background:rgba(237,229,212,.72); padding:.35rem .7rem;
+}
+.hero-card {
+  position:absolute; bottom:3rem; right:-1rem;
+  background:var(--paper); padding:1rem 1.3rem;
+  box-shadow:0 6px 30px rgba(30,26,20,.12); width:160px;
+  animation:float 4s ease-in-out infinite;
+}
+.hero-card-tag {
+  font-family: var(--f-mono);
+  font-size: var(--t-cap);
+  letter-spacing:.2em; text-transform:uppercase;
+  color:var(--rust); margin-bottom:.3rem;
+}
+.hero-card-val {
+  font-family: var(--f-mono);
+  font-size: var(--t-d3); font-weight:500;
+  line-height:1.2; color:var(--ink);
+}
+.hero-card-sub {
+  font-family: var(--f-body);
+  font-size: var(--t-cap);
+  color:var(--ink-3); margin-top:.25rem;
+}
+
+@keyframes float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-7px)} }
+@keyframes fup   { to{opacity:1;transform:none} }
+
+/* ─────────────────────────────────────────
+   MARQUEE
+───────────────────────────────────────── */
+.mq { overflow:hidden; background:var(--rust); padding:.8rem 0; }
+.mq-track {
+  display:flex; white-space:nowrap;
+  animation:mqs 28s linear infinite;
+}
+.mq-track span {
+  font-family: var(--f-mono);
+  font-size: var(--t-cap);
+  letter-spacing:.28em; text-transform:uppercase;
+  color:rgba(237,229,212,.4); padding:0 1.8rem;
+}
+.mq-track span.hi { color:rgba(237,229,212,.88); }
+@keyframes mqs { from{transform:translateX(0)} to{transform:translateX(-50%)} }
+
+/* ─────────────────────────────────────────
+   ABOUT
+───────────────────────────────────────── */
+#about { background:var(--paper); }
+.about-wrap {
+  display:grid; grid-template-columns:1.1fr .9fr;
+  gap:5rem; align-items:start;
+  margin-top: var(--sp-lg);
+}
+
+/* Photo collage */
+.about-photos { display:grid; grid-template-columns:1fr 1fr; gap:.85rem; }
+.aph { overflow:hidden; position:relative; background:var(--paper-2); }
+.aph-inner { width:100%; padding-top:128%; position:relative; overflow:hidden; }
+.aph-inner.wide { padding-top:58%; }
+.aph-bg {
+  position:absolute; inset:0;
+  display:flex; align-items:center; justify-content:center;
+  transition:transform .6s var(--ease);
+}
+.aph:hover .aph-bg { transform:scale(1.04); }
+.aph:nth-child(1) .aph-bg { background:linear-gradient(150deg,#D4C8B0,#C0B49C); }
+.aph:nth-child(2) .aph-bg { background:linear-gradient(150deg,#C8C0B0,#B4AA9C); }
+.aph:nth-child(3) { grid-column:span 2; }
+.aph:nth-child(3) .aph-bg { background:linear-gradient(120deg,#CCC0AA,#B8AC98); }
+.aph-glyph {
+  font-family: var(--f-head);
+  font-size:var(--t-d2); font-style:italic;
+  color:rgba(30,26,20,.07); user-select:none;
+}
+.aph-cap {
+  position:absolute; bottom:.6rem; left:.6rem;
+  font-family: var(--f-mono);
+  font-size: var(--t-cap);
+  letter-spacing:.16em; text-transform:uppercase;
+  background:rgba(237,229,212,.85); color:var(--ink-3);
+  padding:.22rem .5rem;
+}
+
+/* About text */
+.about-text {}
+/* Playfair for the sub-heading */
+.about-heading {
+  font-family: var(--f-head);
+  font-size: var(--t-d3);
+  font-weight: 700;
+  line-height:1.12;
+  color: var(--ink);
+  margin-top: var(--sp-sm);
+}
+.about-heading em { font-style:italic; color:var(--rust); }
+
+.about-pull {
+  font-family: var(--f-head);
+  font-style: italic;
+  font-size: var(--t-d3);
+  color: var(--ink-2);
+  line-height:1.65;
+  border-left:2px solid var(--rust);
+  border-radius:0;
+  padding-left:1rem;
+  margin: var(--sp-md) 0;
+}
+.about-body {
+  font-family: var(--f-body);
+  font-size: var(--t-ui);
+  color: var(--ink-3);
+  line-height:1.85;
+}
+.about-body + .about-body { margin-top:.75rem; }
+
+.about-badge {
+  display:inline-flex; align-items:center; gap:.9rem;
+  border:1px solid var(--border); padding:.9rem 1.25rem;
+  margin-top: var(--sp-md);
+}
+.about-badge-n {
+  font-family: var(--f-mono);
+  font-size:var(--t-d3); font-weight:500;
+  color:var(--rust); line-height:1;
+}
+.about-badge-t {
+  font-family: var(--f-mono);
+  font-size: var(--t-cap);
+  letter-spacing:.14em; text-transform:uppercase;
+  color:var(--ink-3); line-height:1.75;
+}
+
+/* ─────────────────────────────────────────
+   SHOWCASE
+───────────────────────────────────────── */
+#showcase { background:var(--paper-2); padding:var(--sp-sec) 0; }
+.show-hdr {
+  display:flex; justify-content:space-between; align-items:flex-end;
+  padding:0 var(--sp-h) var(--sp-lg);
+}
+.show-view {
+  font-family: var(--f-mono);
+  font-size: var(--t-cap);
+  letter-spacing:.18em; text-transform:uppercase;
+  color:var(--ink-3); text-decoration:none;
+  border-bottom:1px solid var(--border); padding-bottom:2px;
+  transition:color .25s, border-color .25s;
+}
+.show-view:hover { color:var(--rust); border-color:var(--rust); }
+.show-scroll {
+  display:flex; gap:1.1rem;
+  padding:0 var(--sp-h) var(--sp-sm);
+  overflow-x:auto; scroll-snap-type:x mandatory; scrollbar-width:none;
+}
+.show-scroll::-webkit-scrollbar { display:none; }
+.sc { flex:0 0 285px; scroll-snap-align:start; overflow:hidden; transition:transform .5s var(--ease); }
+.sc:hover { transform:translateY(-5px); }
+.sc-wide { flex:0 0 450px; }
+.sc-photo { width:100%; aspect-ratio:3/4; overflow:hidden; position:relative; }
+.sc-wide .sc-photo { aspect-ratio:4/5; }
+.sc-photo-bg { width:100%; height:100%; transition:transform .7s var(--ease); }
+.sc:hover .sc-photo-bg { transform:scale(1.05); }
+.scb1{background:linear-gradient(160deg,#D0C4AC,#BAAA94);}
+.scb2{background:linear-gradient(160deg,#C0BEB4,#AAAA9E);}
+.scb3{background:linear-gradient(160deg,#C8BBAC,#B2A89A);}
+.scb4{background:linear-gradient(160deg,#BABCB4,#A8AAA2);}
+.scb5{background:linear-gradient(160deg,#C8BCAA,#B4AA98);}
+.sc-glyph {
+  position:absolute; inset:0;
+  display:flex; align-items:center; justify-content:center;
+  font-family: var(--f-head);
+  font-size:var(--t-d2); font-style:italic;
+  color:rgba(30,26,20,.08); user-select:none;
+}
+.sc-cap {
+  position:absolute; top:.75rem; left:.75rem;
+  font-family: var(--f-mono);
+  font-size: var(--t-cap);
+  letter-spacing:.18em; text-transform:uppercase;
+  color:rgba(30,26,20,.36); background:rgba(237,229,212,.7);
+  padding:.22rem .5rem;
+}
+.sc-body { padding:.9rem 0 0; }
+.sc-cat {
+  font-family: var(--f-mono);
+  font-size: var(--t-cap);
+  letter-spacing:.2em; text-transform:uppercase;
+  color:var(--rust);
+}
+.sc-name {
+  font-family: var(--f-body);
+  font-size: var(--t-ui);
+  font-weight: 500;
+  line-height:1.2; color:var(--ink);
+  margin-top:.25rem;
+}
+.sc-desc {
+  font-family: var(--f-body);
+  font-size: var(--t-ui);
+  color:var(--ink-3); font-weight:300;
+  margin-top:.3rem; line-height:1.65;
+}
+.sc-link {
+  display:inline-flex; align-items:center; gap:.35rem;
+  font-family: var(--f-mono);
+  font-size: var(--t-cap);
+  letter-spacing:.1em; text-transform:uppercase;
+  color:var(--ink-3); margin-top:.65rem;
+  text-decoration:none; transition:color .25s;
+}
+.sc-link:hover { color:var(--rust); }
+
+/* ─────────────────────────────────────────
+   PROOF STRIP
+───────────────────────────────────────── */
+#proof { background:var(--paper-3); padding:5rem var(--sp-h); }
+.proof-nums {
+  display:grid; grid-template-columns:repeat(4,1fr);
+  border:1px solid var(--border); margin-top:var(--sp-lg);
+}
+.pn {
+  padding:2rem 1.75rem;
+  border-right:1px solid var(--border);
+  position:relative; overflow:hidden; transition:background .3s;
+}
+.pn:last-child { border-right:none; }
+.pn:hover { background:var(--paper-2); }
+.pn::after {
+  content:''; position:absolute; bottom:0; left:0;
+  width:100%; height:2px; background:var(--rust);
+  transform:scaleX(0); transform-origin:left;
+  transition:transform .4s var(--ease);
+}
+.pn:hover::after { transform:scaleX(1); }
+.pn-val {
+  font-family: var(--f-mono);
+  font-size:var(--t-d3); font-weight:500;
+  color:var(--ink); line-height:1;
+}
+.pn-val em { color:var(--rust); font-style:normal; }
+.pn-key {
+  font-family: var(--f-mono);
+  font-size: var(--t-cap);
+  letter-spacing:.2em; text-transform:uppercase;
+  color:var(--ink-3); margin-top:.5rem;
+}
+
+/* ─────────────────────────────────────────
+   PHILOSOPHY
+───────────────────────────────────────── */
+#philosophy {
+  background:var(--ink);
+  padding:9rem var(--sp-h);
+  position:relative; overflow:hidden; text-align:center;
+}
+.phil-bg {
+  position:absolute; inset:0;
+  display:flex; align-items:center; justify-content:center;
+  font-family: var(--f-head);
+  font-size:var(--t-d1); font-weight:900; font-style:italic;
+  color:rgba(237,229,212,.03); user-select:none; pointer-events:none;
+}
+.phil-tag {
+  font-family: var(--f-mono);
+  font-size: var(--t-cap);
+  letter-spacing:.3em; text-transform:uppercase;
+  color:var(--rust-lt);
+  display:flex; align-items:center; justify-content:center; gap:.7rem;
+  margin-bottom:2.5rem; position:relative; z-index:1;
+}
+.phil-tag::before,.phil-tag::after { content:''; width:24px; height:1px; background:var(--rust); }
+/* Playfair for the quote */
+.phil-q {
+  font-family: var(--f-head);
+  font-size: var(--t-d2);
+  font-weight:400; font-style:italic;
+  line-height:1.35; color:rgba(237,229,212,.9);
+  max-width:820px; margin:0 auto;
+  position:relative; z-index:1;
+}
+.phil-q strong { color:var(--rust-lt); font-weight:700; font-style:normal; }
+.phil-attr {
+  font-family: var(--f-mono);
+  font-size: var(--t-cap);
+  letter-spacing:.26em; text-transform:uppercase;
+  color:rgba(237,229,212,.22);
+  margin-top:2rem; position:relative; z-index:1;
+}
+
+/* ─────────────────────────────────────────
+   TEAM
+───────────────────────────────────────── */
+#team { background:var(--paper); }
+.team-row {
+  display:grid; grid-template-columns:repeat(4,1fr);
+  gap:1.2rem; margin-top:var(--sp-lg);
+}
+.tm-photo { aspect-ratio:3/4; overflow:hidden; position:relative; background:var(--paper-2); }
+.tm-photo-bg { width:100%; height:100%; transition:transform .6s var(--ease); }
+.tm:hover .tm-photo-bg { transform:scale(1.04); }
+.tm-bg1{background:linear-gradient(150deg,#D4CABC,#C0B4A4);}
+.tm-bg2{background:linear-gradient(150deg,#C4C2BA,#B0AEA4);}
+.tm-bg3{background:linear-gradient(150deg,#CABFC0,#B6AAAA);}
+.tm-bg4{background:linear-gradient(150deg,#C0C4BE,#ACAEB0);}
+.tm-glyph {
+  position:absolute; inset:0;
+  display:flex; align-items:center; justify-content:center;
+  font-family: var(--f-head);
+  font-size:var(--t-d2); font-style:italic;
+  color:rgba(30,26,20,.08); user-select:none;
+}
+.tm-cap {
+  position:absolute; bottom:.6rem; left:.6rem;
+  font-family: var(--f-mono);
+  font-size: var(--t-cap);
+  letter-spacing:.14em; text-transform:uppercase;
+  background:rgba(237,229,212,.85); color:var(--ink-3); padding:.2rem .45rem;
+}
+.tm-info { padding:.85rem 0 0; }
+.tm-name {
+  font-family: var(--f-body);
+  font-size: var(--t-ui);
+  font-weight:500; color:var(--ink);
+}
+.tm-role {
+  font-family: var(--f-mono);
+  font-size: var(--t-cap);
+  letter-spacing:.16em; text-transform:uppercase;
+  color:var(--rust); margin-top:.2rem;
+}
+
+/* ─────────────────────────────────────────
+   CTA
+───────────────────────────────────────── */
+#cta { background:var(--paper-2); padding:var(--sp-sec) var(--sp-h); }
+.cta-wrap { display:grid; grid-template-columns:1fr 1fr; gap:5rem; align-items:center; }
+/* Playfair for CTA headline */
+.cta-h {
+  font-family: var(--f-head);
+  font-size: var(--t-d2);
+  font-weight:700; line-height:.98; letter-spacing:-.02em;
+  color:var(--ink);
+}
+.cta-h em { font-style:italic; color:var(--rust); }
+.cta-sub {
+  font-family: var(--f-body);
+  font-size: var(--t-ui);
+  color:var(--ink-3); line-height:1.85;
+  max-width:380px; margin-top:var(--sp-md);
+}
+.cta-spots {
+  display:flex; gap:2.5rem;
+  margin-top:var(--sp-md); padding-top:var(--sp-md);
+  border-top:1px solid var(--border);
+}
+.cta-spot-val {
+  font-family: var(--f-mono);
+  font-size:var(--t-d3); font-weight:500;
+  color:var(--ink); line-height:1;
+}
+.cta-spot-lbl {
+  font-family: var(--f-mono);
+  font-size: var(--t-cap);
+  letter-spacing:.18em; text-transform:uppercase;
+  color:var(--ink-3); margin-top:.3rem;
+}
+.cta-field {
+  width:100%; background:var(--paper);
+  border:1px solid var(--border); color:var(--ink);
+  font-family: var(--f-body);
+  font-size: var(--t-ui);
+  padding:.85rem 1.1rem; margin-bottom:.75rem; outline:none;
+  transition:border-color .3s;
+}
+.cta-field:focus { border-color:var(--rust); }
+.cta-field::placeholder { color:var(--ink-3); }
+.cta-submit {
+  width:100%; background:var(--rust); color:var(--paper); border:none;
+  font-family: var(--f-mono);
+  font-size: var(--t-cap);
+  letter-spacing:.22em; text-transform:uppercase;
+  padding:.95rem; cursor:none; transition:background .3s;
+}
+.cta-submit:hover { background:var(--rust-dk); }
+.cta-fine {
+  font-family: var(--f-mono);
+  font-size: var(--t-cap);
+  letter-spacing:.1em;
+  color:var(--ink-3); margin-top:.65rem; text-align:center;
+}
+
+/* ─────────────────────────────────────────
+   FOOTER
+───────────────────────────────────────── */
+footer { background:var(--ink); padding:4rem var(--sp-h) 2rem; }
+.ft-top {
+  display:grid; grid-template-columns:1.4fr 1fr 1fr 1fr; gap:3rem;
+  padding-bottom:3rem; border-bottom:1px solid rgba(237,229,212,.08);
+}
+.ft-logo {
+  font-family: var(--f-mono);
+  font-weight:500; font-size: var(--t-tag);
+  letter-spacing:.4em; text-transform:uppercase;
+  color:var(--paper); display:block; margin-bottom:.6rem;
+}
+.ft-tagline {
+  font-family: var(--f-body);
+  font-size: var(--t-ui);
+  color:rgba(237,229,212,.28); line-height:1.85;
+}
+.ft-col h5 {
+  font-family: var(--f-mono);
+  font-size: var(--t-cap);
+  letter-spacing:.26em; text-transform:uppercase;
+  color:var(--rust-lt); margin-bottom:1rem;
+}
+.ft-col ul { list-style:none; }
+.ft-col ul li { margin-bottom:.5rem; }
+.ft-col ul li a {
+  font-family: var(--f-body);
+  font-size: var(--t-ui);
+  color:rgba(237,229,212,.3); text-decoration:none;
+  transition:color .25s;
+}
+.ft-col ul li a:hover { color:var(--paper); }
+.ft-bot {
+  display:flex; justify-content:space-between; align-items:center;
+  padding-top:1.75rem;
+}
+.ft-copy {
+  font-family: var(--f-mono);
+  font-size: var(--t-cap);
+  letter-spacing:.08em; color:rgba(237,229,212,.15);
+}
+.ft-soc { display:flex; gap:.6rem; }
+.ft-soc a {
+  width:28px; height:28px;
+  border:1px solid rgba(237,229,212,.1);
+  display:flex; align-items:center; justify-content:center;
+  font-family: var(--f-mono);
+  font-size: var(--t-cap);
+  color:rgba(237,229,212,.28); text-decoration:none;
+  transition:border-color .25s, color .25s;
+}
+.ft-soc a:hover { border-color:var(--rust-lt); color:var(--rust-lt); }
+
+/* ─────────────────────────────────────────
+   RESPONSIVE
+───────────────────────────────────────── */
+@media(max-width:1100px){
+  #hero { grid-template-columns:1fr; }
+  .hero-right { display:none; }
+  .about-wrap { grid-template-columns:1fr; }
+  .cta-wrap { grid-template-columns:1fr; }
+  .proof-nums { grid-template-columns:1fr 1fr; }
+  .pn:nth-child(2){ border-right:none; }
+  .pn:nth-child(3){ border-top:1px solid var(--border); }
+  .pn:nth-child(4){ border-top:1px solid var(--border); border-right:none; }
+  .team-row { grid-template-columns:1fr 1fr; }
+  .ft-top { grid-template-columns:1fr 1fr; gap:2rem; }
+}
+@media(max-width:768px){
+  :root { --sp-h:1.5rem; --sp-sec:4.5rem; }
+  nav { padding:1.3rem var(--sp-h); }
+  nav.stuck { padding:.85rem var(--sp-h); }
+  .nav-links,.nav-pill { display:none; }
+  .nav-burger { display:flex; }
+  #showcase { padding:4.5rem 0; }
+  .show-hdr { padding:0 var(--sp-h) 2rem; }
+  .show-scroll { padding:0 var(--sp-h) var(--sp-sm); }
+  #philosophy { padding:6rem var(--sp-h); }
+  .sc { flex:0 0 250px; }
+  .ft-top { grid-template-columns:1fr; }
+  .ft-bot { flex-direction:column; gap:1rem; text-align:center; }
+}
+@media(min-width:1600px){
+  :root { --sp-h:5.5rem; }
+  #showcase { padding:var(--sp-sec) 0; }
+  .show-hdr { padding:0 var(--sp-h) var(--sp-lg); }
+  .show-scroll { padding:0 var(--sp-h) var(--sp-sm); }
+}
+</style>
+</head>
+<body>
+
+<div id="cur"><div id="cur-d"></div><div id="cur-r"></div></div>
+
+<!-- NAV -->
+<nav id="nav">
+  <a href="#" class="nav-logo">FORMA</a>
+  <ul class="nav-links">
+    <li><a href="#about">Studio</a></li>
+    <li><a href="#showcase">Work</a></li>
+    <li><a href="#team">Team</a></li>
+    <li><a href="#cta">Contact</a></li>
+  </ul>
+  <a href="#cta" class="nav-pill">Get Invited</a>
+  <div class="nav-burger"><span></span><span></span><span></span></div>
+</nav>
+
+<!-- ══ HERO ══ -->
+<section id="hero">
+  <div class="hero-left">
+    <p class="hero-eyebrow">Manila · Singapore · New York</p>
+    <h1 class="hero-h1">
+      <span class="l-solid">Build</span>
+      <span class="l-rust">Your</span>
+      <span class="l-solid">Icon.</span>
+    </h1>
+    <p class="hero-sub">Southeast Asia's most sought-after personal branding studio — architecting identities of founders and cultural leaders who refuse to be ordinary.</p>
+    <div class="hero-btns">
+      <a href="#cta" class="btn-solid">
+        Request an Invite
+        <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M1 6h10M6.5 1.5L11 6l-4.5 4.5" stroke="currentColor" stroke-width="1.2"/></svg>
+      </a>
+      <a href="#showcase" class="btn-text">See Our Work</a>
+    </div>
+    <div class="hero-kpis">
+      <div><div class="kpi-val">120+</div><div class="kpi-lbl">Icons Built</div></div>
+      <div><div class="kpi-val">38</div><div class="kpi-lbl">Global Markets</div></div>
+      <div><div class="kpi-val">97%</div><div class="kpi-lbl">Retention</div></div>
+    </div>
+  </div>
+  <div class="hero-right">
+    <div class="hero-photo-bg">
+      <span class="hero-photo-glyph">F</span>
+      <div class="hero-photo-cap">Client Portrait — Editorial Session</div>
+    </div>
+    <div class="hero-card">
+      <div class="hero-card-tag">Recognition</div>
+      <div class="hero-card-val">Forbes<br>30U30</div>
+      <div class="hero-card-sub">Asia Edition · 2024</div>
+    </div>
+  </div>
+</section>
+
+<!-- MARQUEE -->
+<div class="mq">
+  <div class="mq-track" aria-hidden="true">
+    <span class="hi">Personal Branding</span><span>·</span>
+    <span>Visual Identity</span><span>·</span>
+    <span class="hi">Executive Positioning</span><span>·</span>
+    <span>Narrative Strategy</span><span>·</span>
+    <span class="hi">Media Architecture</span><span>·</span>
+    <span>Digital Presence</span><span>·</span>
+    <span class="hi">Legacy Building</span><span>·</span>
+    <span>Network Design</span><span>·</span>
+    <span class="hi">Personal Branding</span><span>·</span>
+    <span>Visual Identity</span><span>·</span>
+    <span class="hi">Executive Positioning</span><span>·</span>
+    <span>Narrative Strategy</span><span>·</span>
+    <span class="hi">Media Architecture</span><span>·</span>
+    <span>Digital Presence</span><span>·</span>
+    <span class="hi">Legacy Building</span><span>·</span>
+    <span>Network Design</span><span>·</span>
+  </div>
+</div>
+
+<!-- ══ ABOUT ══ -->
+<section id="about" class="sec">
+  <div class="rv">
+    <p class="label">The Studio</p>
+    <h2 class="sec-title">We don't manage images —<br><em>we forge them.</em></h2>
+  </div>
+  <div class="about-wrap">
+    <div class="about-photos rv d1">
+      <div class="aph">
+        <div class="aph-inner"><div class="aph-bg"><span class="aph-glyph">A</span></div></div>
+        <div class="aph-cap">Studio — Manila</div>
+      </div>
+      <div class="aph">
+        <div class="aph-inner"><div class="aph-bg"><span class="aph-glyph">F</span></div></div>
+        <div class="aph-cap">Brand Workshop</div>
+      </div>
+      <div class="aph">
+        <div class="aph-inner wide"><div class="aph-bg"><span class="aph-glyph">M</span></div></div>
+        <div class="aph-cap">Campaign — Cityscape</div>
+      </div>
+    </div>
+    <div class="about-text rvr d2">
+      <p class="label" style="margin-bottom:.35rem;">Est. 2016 · Makati City</p>
+      <h3 class="about-heading">Architects of<br><em>Influence.</em></h3>
+      <blockquote class="about-pull">"Your brand is the story the world tells about you when you're not in the room."</blockquote>
+      <p class="about-body">FORMA is Southeast Asia's most exclusive personal branding consultancy — operating at the intersection of strategy, aesthetics, and narrative. A select cohort, chosen for their vision and readiness to own their category.</p>
+      <p class="about-body" style="margin-top:.75rem;">Built in Manila. Trusted across 38 global markets. Recognized on sight.</p>
+      <div class="about-badge rv d3">
+        <div class="about-badge-n">8</div>
+        <div class="about-badge-t">Years redefining<br>personal authority<br>in Southeast Asia</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ SHOWCASE ══ -->
+<section id="showcase">
+  <div class="show-hdr rv">
+    <div>
+      <p class="label">Client Monographs</p>
+      <h2 class="sec-title">Selected <em>Work.</em></h2>
+    </div>
+    <a href="#" class="show-view">View All →</a>
+  </div>
+  <div class="show-scroll">
+    <div class="sc sc-wide rv">
+      <div class="sc-photo">
+        <div class="sc-photo-bg scb1" style="height:100%;"><div class="sc-glyph">R</div></div>
+        <div class="sc-cap">Portrait · Editorial</div>
+      </div>
+      <div class="sc-body">
+        <p class="sc-cat">Founder · Tech</p>
+        <h3 class="sc-name">Rafael Santos</h3>
+        <p class="sc-desc">From stealth startup to Forbes 30U30 Asia — the face of Philippine tech innovation.</p>
+        <a href="#" class="sc-link">Read Case →</a>
+      </div>
+    </div>
+    <div class="sc rv d1">
+      <div class="sc-photo"><div class="sc-photo-bg scb2"><div class="sc-glyph">I</div></div><div class="sc-cap">Portrait · Boardroom</div></div>
+      <div class="sc-body"><p class="sc-cat">Executive · Finance</p><h3 class="sc-name">Isabel Reyes</h3><p class="sc-desc">Positioned as the region's leading voice on sustainable investing.</p><a href="#" class="sc-link">Read Case →</a></div>
+    </div>
+    <div class="sc rv d2">
+      <div class="sc-photo"><div class="sc-photo-bg scb3"><div class="sc-glyph">M</div></div><div class="sc-cap">Scenery · Atelier</div></div>
+      <div class="sc-body"><p class="sc-cat">Creative Director · Fashion</p><h3 class="sc-name">Marco dela Cruz</h3><p class="sc-desc">Built a globally recognized design house from a single Manila studio.</p><a href="#" class="sc-link">Read Case →</a></div>
+    </div>
+    <div class="sc rv d3">
+      <div class="sc-photo"><div class="sc-photo-bg scb4"><div class="sc-glyph">S</div></div><div class="sc-cap">Portrait · Lifestyle</div></div>
+      <div class="sc-body"><p class="sc-cat">Founder · Wellness</p><h3 class="sc-name">Sofia Lim</h3><p class="sc-desc">Scaled personal authority into a multi-platform media empire across Asia.</p><a href="#" class="sc-link">Read Case →</a></div>
+    </div>
+    <div class="sc rv d4">
+      <div class="sc-photo"><div class="sc-photo-bg scb5"><div class="sc-glyph">A</div></div><div class="sc-cap">Scenery · Architecture</div></div>
+      <div class="sc-body"><p class="sc-cat">CEO · Real Estate</p><h3 class="sc-name">Adrian Tan</h3><p class="sc-desc">Transformed a regional developer into an internationally sought-after thought leader.</p><a href="#" class="sc-link">Read Case →</a></div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ PROOF STRIP ══ -->
+<section id="proof">
+  <div class="rv">
+    <p class="label">Proof of Influence</p>
+    <h2 class="sec-title">Numbers that <em>command rooms.</em></h2>
+  </div>
+  <div class="proof-nums">
+    <div class="pn rv d1"><div class="pn-val">₱2.4<em>B+</em></div><div class="pn-key">Market Value Created</div></div>
+    <div class="pn rv d2"><div class="pn-val">38</div><div class="pn-key">Global Markets</div></div>
+    <div class="pn rv d3"><div class="pn-val">97<em>%</em></div><div class="pn-key">Retention Rate</div></div>
+    <div class="pn rv d4"><div class="pn-val">120<em>+</em></div><div class="pn-key">Icons Forged</div></div>
+  </div>
+</section>
+
+<!-- ══ PHILOSOPHY ══ -->
+<section id="philosophy">
+  <div class="phil-bg">FORMA</div>
+  <p class="phil-tag rv">Philosophy</p>
+  <blockquote class="phil-q rv d2">"The most powerful brands are not companies — they are <strong>people who chose to be seen</strong> with absolute intentionality."</blockquote>
+  <p class="phil-attr rv d3">FORMA Founding Manifesto · Makati City, 2016</p>
+</section>
+
+<!-- ══ TEAM ══ -->
+<section id="team" class="sec">
+  <div class="rv">
+    <p class="label">The People</p>
+    <h2 class="sec-title">Curated <em>minds.</em></h2>
+  </div>
+  <div class="team-row">
+    <div class="tm rv d1">
+      <div class="tm-photo"><div class="tm-photo-bg tm-bg1"><div class="tm-glyph">A</div></div><div class="tm-cap">Creative Direction</div></div>
+      <div class="tm-info"><div class="tm-name">Alejandro Villanueva</div><div class="tm-role">Founder & Chief Strategist</div></div>
+    </div>
+    <div class="tm rv d2">
+      <div class="tm-photo"><div class="tm-photo-bg tm-bg2"><div class="tm-glyph">M</div></div><div class="tm-cap">Art Direction</div></div>
+      <div class="tm-info"><div class="tm-name">Mia Castillo</div><div class="tm-role">Creative Director</div></div>
+    </div>
+    <div class="tm rv d3">
+      <div class="tm-photo"><div class="tm-photo-bg tm-bg3"><div class="tm-glyph">D</div></div><div class="tm-cap">Media Relations</div></div>
+      <div class="tm-info"><div class="tm-name">David Sy</div><div class="tm-role">Head of Media</div></div>
+    </div>
+    <div class="tm rv d4">
+      <div class="tm-photo"><div class="tm-photo-bg tm-bg4"><div class="tm-glyph">L</div></div><div class="tm-cap">Editorial</div></div>
+      <div class="tm-info"><div class="tm-name">Lucia Hernandez</div><div class="tm-role">Narrative Architect</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ CTA ══ -->
+<section id="cta">
+  <div class="cta-wrap">
+    <div class="rvl">
+      <p class="label">Ready?</p>
+      <h2 class="cta-h">Your name<br><em>deserves more.</em></h2>
+      <p class="cta-sub">We accept a limited cohort each quarter. If you're ready to become the definitive authority in your field, we'd like to hear from you.</p>
+      <div class="cta-spots">
+        <div><div class="cta-spot-val">Q2 2025</div><div class="cta-spot-lbl">Next intake opens</div></div>
+        <div><div class="cta-spot-val">4 Spots</div><div class="cta-spot-lbl">Remaining this quarter</div></div>
+      </div>
+    </div>
+    <div class="rvr d2">
+      <input class="cta-field" type="text" placeholder="Your full name"/>
+      <input class="cta-field" type="email" placeholder="Your email address"/>
+      <input class="cta-field" type="text" placeholder="Your role & company"/>
+      <button class="cta-submit" id="ctaBtn">Request an Invite</button>
+      <p class="cta-fine">By invitation only · Strictly confidential · Response within 48 hrs</p>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="ft-top">
+    <div>
+      <span class="ft-logo">FORMA</span>
+      <p class="ft-tagline">Premium Personal Branding<br>Built in Manila. Recognized Worldwide.</p>
+    </div>
+    <div class="ft-col"><h5>Agency</h5><ul><li><a href="#">About</a></li><li><a href="#">Process</a></li><li><a href="#">Careers</a></li></ul></div>
+    <div class="ft-col"><h5>Services</h5><ul><li><a href="#">Brand Identity</a></li><li><a href="#">Positioning</a></li><li><a href="#">Media & PR</a></li></ul></div>
+    <div class="ft-col"><h5>Contact</h5><ul><li><a href="#">hello@forma.ph</a></li><li><a href="#">Makati City, PH</a></li><li><a href="#">Get Invited</a></li></ul></div>
+  </div>
+  <div class="ft-bot">
+    <p class="ft-copy">© 2025 FORMA Agency, Inc. · Makati City, Philippines</p>
+    <div class="ft-soc"><a href="#">Li</a><a href="#">Ig</a><a href="#">Tw</a><a href="#">Be</a></div>
+  </div>
+</footer>
+
+<script>
+const cd=document.getElementById('cur-d'),cr=document.getElementById('cur-r');
+let mx=0,my=0,rx=0,ry=0;
+document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;});
+(function tick(){rx+=(mx-rx)*.1;ry+=(my-ry)*.1;cd.style.cssText=`left:${mx}px;top:${my}px`;cr.style.cssText=`left:${rx}px;top:${ry}px`;requestAnimationFrame(tick);})();
+const nav=document.getElementById('nav');
+window.addEventListener('scroll',()=>nav.classList.toggle('stuck',scrollY>60));
+const obs=new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('on');obs.unobserve(e.target);}});},{threshold:.1,rootMargin:'0px 0px -36px 0px'});
+document.querySelectorAll('.rv,.rvl,.rvr').forEach(el=>obs.observe(el));
+document.querySelectorAll('a[href^="#"]').forEach(a=>{a.addEventListener('click',e=>{const t=document.querySelector(a.getAttribute('href'));if(t){e.preventDefault();t.scrollIntoView({behavior:'smooth'});}});});
+document.getElementById('ctaBtn').addEventListener('click',function(){
+  const email=document.querySelectorAll('.cta-field')[1];
+  if(email.value&&email.value.includes('@')){
+    this.textContent='Request Received ✓';this.style.background='#7A8C74';
+    document.querySelectorAll('.cta-field').forEach(f=>f.value='');
+    setTimeout(()=>{this.textContent='Request an Invite';this.style.background='';},4000);
+  } else {
+    email.style.borderColor='rgba(192,91,58,.7)';
+    setTimeout(()=>email.style.borderColor='',1800);
+  }
+});
+</script>
+</body>
+</html>
